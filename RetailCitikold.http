@@ -1,0 +1,6 @@
+@RetailCitikold_HostAddress = http://localhost:5185
+
+GET {{RetailCitikold_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
