@@ -12,6 +12,8 @@ public static class DbContextsExtensions
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<IItemService, ItemRepository>();
+        services.AddScoped<IRegisterService, RegisterRepository>();
+        services.AddScoped<IEmailService, EmailRepository>();
    
         return services;
     }

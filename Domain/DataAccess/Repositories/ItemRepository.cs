@@ -8,6 +8,8 @@ namespace RetailCitikold.Domain.DataAccess.Repositories;
 
 public class ItemRepository(RetailCitikoldDbContext context) : IItemService
 {
+    
+    #region Create Item
     public async Task<ProcessResponseDto> CreateItem(Items item)
     {
 
@@ -31,7 +33,10 @@ public class ItemRepository(RetailCitikoldDbContext context) : IItemService
         }
        
     }
+    #endregion
 
+    #region Read Item {id}
+    
     public async Task<ItemResponseDto> ReadItem(int id)
     {
         var item = await context.Items.FirstOrDefaultAsync(i => i.id == id);
@@ -51,7 +56,9 @@ public class ItemRepository(RetailCitikoldDbContext context) : IItemService
             Item = item
         };
     }
+    #endregion
 
+    #region Update Iten
     public async Task<ProcessResponseDto> UpdateItem(Items item)
     {
         var ifExist = context.Items.FirstOrDefault(i => i.id == item.id);
@@ -64,7 +71,6 @@ public class ItemRepository(RetailCitikoldDbContext context) : IItemService
                 Error = "Item no encontrado"
             };
         }
-
 
         try
         {
@@ -94,10 +100,13 @@ public class ItemRepository(RetailCitikoldDbContext context) : IItemService
                 Error = $"Error al guardar el item: {ex.InnerException?.Message ?? ex.Message}"
             };
         }
-        
-        
-        
     }
+    
+    
+    
+    #endregion
+
+    #region Delete Item
 
     public async Task<ItemResponseDto> DeleteItem(int id)
     {
@@ -131,4 +140,6 @@ public class ItemRepository(RetailCitikoldDbContext context) : IItemService
             );
         }
     }
+
+    #endregion
 }

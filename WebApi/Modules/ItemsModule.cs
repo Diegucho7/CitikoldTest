@@ -1,7 +1,5 @@
 using Carter;
-using Microsoft.AspNetCore.Mvc;
 using RetailCitikold.Domain.DataAccess.Intefaces.Repositories;
-using RetailCitikold.Domain.DataAccess.Repositories;
 using RetailCitikold.Domain.Entities;
 
 namespace RetailCitikold.WebApi.Modules;

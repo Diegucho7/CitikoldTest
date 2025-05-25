@@ -10,10 +10,10 @@ public class RetailCitikoldDbContext : DbContext
     {
           
     }
-    
     #region DbSet
     
-    public DbSet<User> User { get; set; }
+    public DbSet<Users> Users { get; set; }
+    public DbSet<Person> Person { get; set; }
     public DbSet<Items> Items { get; set; }
     public DbSet<Document> Documents { get; set; }
     public DbSet<Establishment> Establishments { get; set; }
@@ -34,5 +34,6 @@ public class RetailCitikoldDbContext : DbContext
    
     
     #endregion
+    
     
 }
