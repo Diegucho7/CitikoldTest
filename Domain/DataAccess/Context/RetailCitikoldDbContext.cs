@@ -15,8 +15,8 @@ public class RetailCitikoldDbContext : DbContext
     public DbSet<Users> Users { get; set; }
     public DbSet<Person> Person { get; set; }
     public DbSet<Items> Items { get; set; }
-    public DbSet<Document> Documents { get; set; }
-    public DbSet<Establishment> Establishments { get; set; }
+    public DbSet<Document> Document { get; set; }
+    public DbSet<Establishment> Establishment { get; set; }
     public DbSet<Fee> Fee { get; set; }
     public DbSet<Inventary> Inventary { get; set; }
     public DbSet<OrderRequest> OrderRequest { get; set; }
@@ -29,6 +29,7 @@ public class RetailCitikoldDbContext : DbContext
     public DbSet<TaxItem> TaxItem { get; set; }
     public DbSet<TypeDocument> TypeDocument { get; set; }
     public DbSet<TypeTax> TypeTax { get; set; }
+    
     public DbSet<Country> Country { get; set; }
     public DbSet<SourceDocument> SourceDocument { get; set; }
    

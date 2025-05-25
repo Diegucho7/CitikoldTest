@@ -13,6 +13,7 @@ public static class DbContextsExtensions
     {
         services.AddScoped<IItemService, ItemRepository>();
         services.AddScoped<IRegisterService, RegisterRepository>();
+        services.AddScoped<IOrderRequestService, OrderRequestRepository>();
         services.AddScoped<IEmailService, EmailRepository>();
    
         return services;

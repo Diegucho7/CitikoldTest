@@ -37,7 +37,7 @@ public class TokenHelper
     public  TokenValidationResult  ValidatePasswordResetToken(string token)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_secret); // misma clave que usaste al generar
+        var key = Encoding.ASCII.GetBytes(_secret);
     
         var validationParameters = new TokenValidationParameters
         {

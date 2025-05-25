@@ -22,12 +22,12 @@ public class RegisterRepository(RetailCitikoldDbContext context,
     {
             try
             {
-                if (!passwordValidator.IsValidPassword(user.password, out string errorMsg))
+                if (!passwordValidator.IsValidPassword(user.password, out string error))
                 {
                     return new ProcessResponseDto
                     {
                         IsSuccess = false,
-                        Error = errorMsg
+                        Mssg = error
                     };
                 }
                 var passwordHasher = new PasswordHasher<Users>();
@@ -37,7 +37,7 @@ public class RegisterRepository(RetailCitikoldDbContext context,
                 return new ProcessResponseDto
                 {
                     IsSuccess = true,
-                    Error = ""
+                    Mssg = ""
                 };
             }
             catch (Exception ex)
@@ -45,7 +45,7 @@ public class RegisterRepository(RetailCitikoldDbContext context,
                 return new ProcessResponseDto
                 {
                     IsSuccess = false,
-                    Error = $"Error al guardar el item: {ex.InnerException?.Message ?? ex.Message}"
+                    Mssg = $"Mssg al guardar el item: {ex.InnerException?.Message ?? ex.Message}"
                 };
             }
        
@@ -61,14 +61,14 @@ public class RegisterRepository(RetailCitikoldDbContext context,
             return new UserResponseDto
             {
                 IsSuccess = false,
-                Error = "Registro no encontrado",
+                Mssg = "Registro no encontrado",
                 Users = null
             };
         }
         return new UserResponseDto
         {
             IsSuccess = true,
-            Error = "Usuario encontrado",
+            Mssg = "Usuario encontrado",
             Users = user
         };
     }
@@ -83,7 +83,7 @@ public class RegisterRepository(RetailCitikoldDbContext context,
             return new ProcessResponseDto
             {
                 IsSuccess = false,
-                Error = "Usuario no encontrado"
+                Mssg = "Usuario no encontrado"
             };
         }
         try
@@ -99,7 +99,7 @@ public class RegisterRepository(RetailCitikoldDbContext context,
             return new ProcessResponseDto
             {
                 IsSuccess = true,
-                Error = ""
+                Mssg = ""
             };
         }
         catch (Exception ex)
@@ -107,7 +107,7 @@ public class RegisterRepository(RetailCitikoldDbContext context,
             return new ProcessResponseDto
             {
                 IsSuccess = false,
-                Error = $"Error al editar el usuario: {ex.InnerException?.Message ?? ex.Message}"
+                Mssg = $"Mssg al editar el usuario: {ex.InnerException?.Message ?? ex.Message}"
             };
         }
     }
@@ -123,7 +123,7 @@ public class RegisterRepository(RetailCitikoldDbContext context,
             return new ProcessResponseDto
             {
                 IsSuccess = false,
-                Error = "Usuario no encontrado"
+                Mssg = "Usuario no encontrado"
             };
         }
         try
@@ -134,7 +134,7 @@ public class RegisterRepository(RetailCitikoldDbContext context,
             return new ProcessResponseDto
             {
                 IsSuccess = true,
-                Error = ""
+                Mssg = ""
             };
         }
         catch (Exception ex)
@@ -142,7 +142,7 @@ public class RegisterRepository(RetailCitikoldDbContext context,
             return new ProcessResponseDto
             {
                 IsSuccess = false,
-                Error = $"Error al Desactivar el User: {ex.InnerException?.Message ?? ex.Message}"
+                Mssg = $"Mssg al Desactivar el User: {ex.InnerException?.Message ?? ex.Message}"
             };
         }
     }
@@ -164,7 +164,7 @@ public class RegisterRepository(RetailCitikoldDbContext context,
                 return new ProcessResponseDto
                 {
                     IsSuccess = false,
-                    Error = "Usuario no encontrado."
+                    Mssg = "Usuario no encontrado."
                 };
             }
 
@@ -176,17 +176,17 @@ public class RegisterRepository(RetailCitikoldDbContext context,
                 return new ProcessResponseDto
                 {
                     IsSuccess = false,
-                    Error = "La contraseña actual es incorrecta."
+                    Mssg = "La contraseña actual es incorrecta."
                 };
             }
 
             
-            if (!passwordValidator.IsValidPassword(password.Password, out var validationError))
+            if (!passwordValidator.IsValidPassword(password.Password, out var validationMssg))
             {
                 return new ProcessResponseDto
                 {
                     IsSuccess = false,
-                    Error = validationError
+                    Mssg = validationMssg
                 };
             }
 
@@ -199,7 +199,7 @@ public class RegisterRepository(RetailCitikoldDbContext context,
             return new ProcessResponseDto
             {
                 IsSuccess = true,
-                Error = ""
+                Mssg = ""
             };
         }
         catch (Exception ex)
@@ -207,7 +207,7 @@ public class RegisterRepository(RetailCitikoldDbContext context,
             return new ProcessResponseDto
             {
                 IsSuccess = false,
-                Error = $"Error al cambiar la contraseña: {ex.InnerException?.Message ?? ex.Message}"
+                Mssg = $"Mssg al cambiar la contraseña: {ex.InnerException?.Message ?? ex.Message}"
             };
         }
     }
@@ -224,7 +224,7 @@ public class RegisterRepository(RetailCitikoldDbContext context,
             return new ProcessResponseDto
             {
                 IsSuccess = false,
-                Error = "Usuario no encontrado."
+                Mssg = "Usuario no encontrado."
             };
 
         }
@@ -294,7 +294,7 @@ public class RegisterRepository(RetailCitikoldDbContext context,
         return new ProcessResponseDto
         {
             IsSuccess = true,
-            Error = "Se ha enviado un enlace al correo ingresado"
+            Mssg = $"Se ha enviado un enlace al correo {user.email}"
         };
 
     }
@@ -316,7 +316,7 @@ public class RegisterRepository(RetailCitikoldDbContext context,
             return new ProcessResponseDto
             {
                 IsSuccess = false,
-                Error = "No se encontró el email en el token"
+                Mssg = "No se encontró el email en el token"
             };
         }
         
@@ -326,7 +326,7 @@ public class RegisterRepository(RetailCitikoldDbContext context,
             return new ProcessResponseDto
             {
                 IsSuccess = false,
-                Error = "No existe el usuario con ese email"
+                Mssg = "No existe el usuario con ese email"
             };
         }
         
@@ -341,7 +341,7 @@ public class RegisterRepository(RetailCitikoldDbContext context,
         return new ProcessResponseDto
         {
             IsSuccess = true,
-            Error = "Clave recuperada exitosamente"
+            Mssg = "Clave recuperada exitosamente"
         };
       
         
@@ -394,9 +394,9 @@ public class RegisterRepository(RetailCitikoldDbContext context,
 
         if (user.attempts <= 5)
         {
-                 user.attempts = 0;
                 var token = genererToken.GenerateToken(user.fullname, user.email);
-               
+                user.attempts = 0;
+                await context.SaveChangesAsync();
                 return new LogginResponseDto
                 {
                     IsSuccess = true,

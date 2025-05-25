@@ -32,7 +32,7 @@ public  class PasswordValidatorLocal
             return false;
         }
 
-        if (!Regex.IsMatch(password, @"[\W_]")) // \W = símbolo no alfanumérico
+        if (!Regex.IsMatch(password, @"[\W_]")) 
         {
             error = "La contraseña debe contener al menos un carácter especial.";
             return false;

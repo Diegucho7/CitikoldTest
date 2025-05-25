@@ -6,7 +6,7 @@ namespace RetailCitikold.Domain.Entities
         public int? id_pointIssue { get; set; }
         public int? id_typeDocument { get; set; }
         public int? id_sourceDocument { get; set; }
-        public string? DateCreateAt { get; set; }
+        public string DateCreateAt { get; set; }
         public string? IssueDate { get; set; }
         public DateTime? IssueDateDT { get; set; }
         public string? NumSerie { get; set; }

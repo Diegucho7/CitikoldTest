@@ -18,6 +18,8 @@ public class Person
     public bool esClient { get; set; }
     public bool esEmployed { get; set; }
     public bool esAnother { get; set; }
+    
+    
     public string apellidoPaterno { get; set; }
     public string apellidoMaterno { get; set; }
     public string primerNombre { get; set; }

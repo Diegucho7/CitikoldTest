@@ -20,7 +20,7 @@ public class ItemRepository(RetailCitikoldDbContext context) : IItemService
           return new ProcessResponseDto
           {
               IsSuccess = true,
-              Error = ""
+              Mssg = ""
           };
         }
         catch (Exception ex)
@@ -28,7 +28,7 @@ public class ItemRepository(RetailCitikoldDbContext context) : IItemService
             return new ProcessResponseDto
             {
                 IsSuccess = false,
-                Error = $"Error al guardar el item: {ex.InnerException?.Message ?? ex.Message}"
+                Mssg = $"Error al guardar el item: {ex.InnerException?.Message ?? ex.Message}"
             };
         }
        
@@ -68,7 +68,7 @@ public class ItemRepository(RetailCitikoldDbContext context) : IItemService
             return new ProcessResponseDto
             {
                 IsSuccess = false,
-                Error = "Item no encontrado"
+                Mssg = "Item no encontrado"
             };
         }
 
@@ -88,7 +88,7 @@ public class ItemRepository(RetailCitikoldDbContext context) : IItemService
             return new ProcessResponseDto
             {
                 IsSuccess = true,
-                Error = ""
+                Mssg = ""
             };
             
         }
@@ -97,7 +97,7 @@ public class ItemRepository(RetailCitikoldDbContext context) : IItemService
             return new ProcessResponseDto
             {
                 IsSuccess = false,
-                Error = $"Error al guardar el item: {ex.InnerException?.Message ?? ex.Message}"
+                Mssg = $"Error al guardar el item: {ex.InnerException?.Message ?? ex.Message}"
             };
         }
     }
