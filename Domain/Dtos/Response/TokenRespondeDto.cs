@@ -8,5 +8,6 @@ namespace RetailCitikold.Domain.Dtos.Response;
     {
         public bool IsSuccess { get; init; }
         public ClaimsPrincipal? Principal { get; init; }
+        public string Email { get; set; } // <-- agregar esto
         public string? ErrorMessage { get; init; }
     }

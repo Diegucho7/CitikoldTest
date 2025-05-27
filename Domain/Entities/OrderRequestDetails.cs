@@ -2,25 +2,28 @@ namespace RetailCitikold.Domain.Entities;
 
 public class OrderRequestDetails
 {
-    public int Id { get; set; }
-    public int OrderRequest_id { get; set; }
-    public int Item_id { get; set; }
-    public string Item_name { get; set; } = null!;
-    public decimal Total_units { get; set; }
-    public decimal Price { get; set; }
-    public decimal Discount_percent { get; set; }
-    public decimal Discount_value { get; set; }
-    public decimal subtotal_before_iva { get; set; }
-    public bool Iva { get; set; }
-    public int Iva_rate_id { get; set; }
-    public decimal Iva_value { get; set; }
-    public decimal Subtotal_before_igv { get; set; }
-    public bool Igv { get; set; }
-    public int Igv_rate_id { get; set; }
-    public decimal Igv_value { get; set; }
-    public bool Ice { get; set; }
-    public int Ice_rate_id { get; set; }
-    public decimal Ice_value { get; set; }
-    public decimal Net_subtotal { get; set; }
-    public string Observation { get; set; } = null!;
+    public int id { get; set; }
+    public int orderRequest_id { get; set; }
+    public int item_id { get; set; }
+    public string? item_name { get; set; } = null!;
+    public int total_units { get; set; }
+    public decimal price { get; set; }
+    public decimal? discount_percent { get; set; }
+    public decimal ?discount_value { get; set; }
+    public decimal subtotal_before_tax { get; set; }
+    public decimal iva { get; set; }
+    public int? iva_rate_id { get; set; }
+    public decimal? iva_value { get; set; }
+    public decimal igv { get; set; }
+    public int? igv_rate_id { get; set; }
+    public decimal igv_value { get; set; }
+    public bool? ice { get; set; }
+    public int? ice_rate_id { get; set; }
+    public decimal? ice_value { get; set; }
+    public decimal? net_subtotal { get; set; }
+    public decimal totalIva { get; set; }
+    public decimal totalIgv { get; set; }
+    
+    
+    public string? observation { get; set; }
 }

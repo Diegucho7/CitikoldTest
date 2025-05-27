@@ -13,10 +13,15 @@ public class OrderRequestModule : ICarterModule
         var group = orderRequest.MapGroup("api/v{version:apiVersion}")
             .HasApiVersion(1.0);
         
-        group.MapPost("/OrderRequest", async (OrderRequestRequestDto order, IOrderRequestService service) =>
+        group.MapPost("/OrderRequest", async (List<OrderRequestUtilRequestDto> order, IOrderRequestService service) =>
         {
             var create = await service.CreateOrder(order);
-            return Results.Created($"/OrderRequest  /{create.IsSuccess}", create);
+            return Results.Created($"/OrderRequest /{create.IsSuccess}", create);
         });
+        group.MapGet("/OrderRequest", async (IOrderRequestService service) =>
+        {
+            var get = await service.ReadAllOrder();
+            return Results.Ok(get);
+        }); 
     }
 }

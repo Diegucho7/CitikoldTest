@@ -7,6 +7,7 @@ using RetailCitikold.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using RetailCitikold.Domain.Dtos.Request;
 using RetailCitikold.Domain.Helpers;
+using System.Security.Claims;
 
 namespace RetailCitikold.Domain.DataAccess.Repositories;
 
@@ -32,12 +33,13 @@ public class RegisterRepository(RetailCitikoldDbContext context,
                 }
                 var passwordHasher = new PasswordHasher<Users>();
                 user.password = passwordHasher.HashPassword(user, user.password);
+                user.role = "ADMIN_ROLE";
                 _ =  await context.Users.AddAsync(user);
                 _ =  await context.SaveChangesAsync();
                 return new ProcessResponseDto
                 {
                     IsSuccess = true,
-                    Mssg = ""
+                    Mssg = "Usuario creado con exito"
                 };
             }
             catch (Exception ex)
@@ -45,7 +47,7 @@ public class RegisterRepository(RetailCitikoldDbContext context,
                 return new ProcessResponseDto
                 {
                     IsSuccess = false,
-                    Mssg = $"Mssg al guardar el item: {ex.InnerException?.Message ?? ex.Message}"
+                    Mssg = $"Mssg al guardar el usuario: {ex.InnerException?.Message ?? ex.Message}"
                 };
             }
        
@@ -90,6 +92,8 @@ public class RegisterRepository(RetailCitikoldDbContext context,
         {
             user.username = usersNew.username; 
             user.fullname = usersNew.fullname;
+            user.name = usersNew.name;
+            user.lastName = usersNew.lastName;
             // user.email = usersNew.email; 
             user.id_Group = usersNew.id_Group;
             user.id_Estado = usersNew.id_Estado;
@@ -231,7 +235,7 @@ public class RegisterRepository(RetailCitikoldDbContext context,
         var token = genererToken.GeneratePasswordResetToken(user.email);
         
        #region CorreoStyle
-             string link = "http://localhost:5185/api/v1/Register/RestorePassword?token=" + token;
+             string link = "http://localhost:4200/#/change-password/" + token;
        
                            string emailBody = $@"
                     <html>
@@ -300,7 +304,7 @@ public class RegisterRepository(RetailCitikoldDbContext context,
     }
     #endregion
     
-    #region Validar Token
+    #region Comprobar Token y cambiar contraseña
 
     public async Task<ProcessResponseDto> RestoreChangePassword(ResetPasswordRequestDto restorePassword)
     {
@@ -310,7 +314,8 @@ public class RegisterRepository(RetailCitikoldDbContext context,
         var principal = tokenHelper.ValidatePasswordResetToken(restorePassword.Token);
         
         
-        var email = principal.Principal?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+        var email = principal.Principal?.Claims
+            .FirstOrDefault(c => c.Type == ClaimTypes.Email || c.Type == "email")?.Value;        
         if (email == null)
         {
             return new ProcessResponseDto
@@ -335,6 +340,7 @@ public class RegisterRepository(RetailCitikoldDbContext context,
         
         // Hashear nueva contraseña y asignarla
         user.password = passwordHasher.HashPassword(user, restorePassword.NewPassword);
+        user.attempts = 0;
         
         await context.SaveChangesAsync();
         
@@ -386,7 +392,7 @@ public class RegisterRepository(RetailCitikoldDbContext context,
             int attemptsLeft = 5 - user.attempts;
             return new LogginResponseDto
             {
-                IsSuccess = true,
+                IsSuccess = false,
                 Mssg = $"Credenciales inválidas. Intentos restantes: {attemptsLeft}",
                 Token = null
             };
@@ -407,14 +413,67 @@ public class RegisterRepository(RetailCitikoldDbContext context,
         
         return new LogginResponseDto
         {
-            IsSuccess = true,
+            IsSuccess = false,
             Mssg = "Loggin Invalido",
             Token = null
         };
     }
 
     #endregion
+
+    #region ValidToken
+
     
-   
+
+    public async Task<ValidTokenResponseDto> ValidToken(string token)
+    {
+        var tokenHelper = new TokenHelper();
+        var principal = tokenHelper.ValidatePasswordResetToken(token);
+        if (principal == null)
+        {
+            // Token inválido, podrías lanzar excepción o devolver null / objeto con error
+            return null;
+        }
+
+        // Obtener userId desde claims
+        var email = principal.Principal?.Claims
+            .FirstOrDefault(c => c.Type == ClaimTypes.Email || c.Type == "email")?.Value;        
+        if (email == null)
+        {
+            return new ValidTokenResponseDto
+                (true, "Token invalido");
+
+        }
+
+        // Obtener usuario de la base de datos
+        var usuario = await context.Users.FirstOrDefaultAsync(u => u.email == email);
+
+        if (usuario == null)
+        {
+            return null;
+        }
+
+        // Generar nuevo token
+        var tokenNew = genererToken.GenerateToken(usuario.fullname, usuario.email);
+
+        // Construir y devolver DTO de respuesta
+        // validar token, obtener usuario de base de datos o claims del token
+        var usuarioid = new UsuarioDto(
+            IdUser: usuario.id,
+            Email: usuario.email,
+            Name: usuario.name,
+            Lastname:  usuario.lastName,
+            Role: usuario.role,
+            Img: "urlimagen",
+            IdGroup: 2
+        );
+
+        var listaUsuarios = new List<UsuarioDto>() { usuarioid };
+
+        return new ValidTokenResponseDto
+            (true, "Token válido", listaUsuarios, new Token(tokenNew.Value));
+
+    }
+    #endregion
    
 }

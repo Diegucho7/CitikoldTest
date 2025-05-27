@@ -1,5 +1,7 @@
 
+using System.Text;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using RetailCitikold.Domain.DataAccess.Intefaces.Repositories;
 using RetailCitikold.Domain.DataAccess.Repositories;
 using RetailCitikold.Domain.Dtos;
@@ -13,10 +15,12 @@ public static class DependencyInjection
 {
     public static WebApplicationBuilder ConfigureServices(this WebApplicationBuilder builder)
     {
+     
+        
+        
         builder.Services.AddScoped<PasswordValidatorLocal>();
         builder.Services.AddScoped<TokenHelper>();
         builder.Services.AddHttpContextAccessor();
-        DotNetEnv.Env.Load();
 
         // Program.cs o Startup.cs (dependiendo tu versión)
         builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
@@ -31,7 +35,7 @@ public static class DependencyInjection
             .AddServices()
             .AddApiVersioningExtension()
             .AddCorsExtension()
-            .AddAuthenticationMiddleware()
+            .AddAuthenticationMiddleware(builder.Configuration)
             .AddAuthorizationMiddleware()
             .AddCarterModules();
         
@@ -55,6 +59,8 @@ public static class DependencyInjection
             .UseAuthorizationMiddleware();
         
         // app.UseHttpsRedirection();
+        
+        
 
         app.UseCarterModules();
 

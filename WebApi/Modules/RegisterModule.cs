@@ -17,7 +17,7 @@ public class RegisterModule : ICarterModule
         group.MapPost("/Register", async (Users user, IRegisterService service) =>
         {
             var create = await service.CreateRegistrer(user);
-            return Results.Created($"/Register  /{create.IsSuccess}", create);
+            return Results.Created($"/Register/{create.IsSuccess}", create);
         });
         group.MapPut("/Register", async (Users user, IRegisterService service) =>
         {
@@ -52,6 +52,20 @@ public class RegisterModule : ICarterModule
         group.MapPost("/Login", async ([FromBody]LogginRequestDto loggin , IRegisterService service) =>
         {
             var logginResponse = await service.Loggin(loggin);
+            return Results.Ok(logginResponse);
+            
+        });group.MapGet("/validToken", async (HttpRequest req , IRegisterService service) =>
+        {
+            // Leer el token del header Authorization
+            var authHeader = req.Headers["Authorization"].FirstOrDefault();
+
+            if (authHeader == null || !authHeader.StartsWith("Bearer "))
+                return Results.Unauthorized();
+
+            var token = authHeader.Substring("Bearer ".Length).Trim();
+
+            var logginResponse = await service.ValidToken(token);
+
             return Results.Ok(logginResponse);
         });
     }

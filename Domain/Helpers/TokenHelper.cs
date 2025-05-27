@@ -51,25 +51,29 @@ public class TokenHelper
         try
         {
             var principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
-    
+
             if (validatedToken is JwtSecurityToken jwtToken &&
                 jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
             {
+                var email = principal.FindFirst(ClaimTypes.Email)?.Value 
+                            ?? principal.FindFirst("email")?.Value;
+
                 return new TokenValidationResult
                 {
                     IsSuccess = true,
                     Principal = principal,
-                    ErrorMessage =  string.Empty,                    
+                    Email = email, 
+                    ErrorMessage = string.Empty
                 };
             }
-        }catch
+        }catch(Exception ex)
         {
             
             return new TokenValidationResult
             {
                 IsSuccess = true,
                 Principal = null,
-                ErrorMessage =  "Token is invalido",                    
+                ErrorMessage = ex.Message,                    
             };
         }
         return new TokenValidationResult

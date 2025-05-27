@@ -11,16 +11,21 @@ public class ItemsModule : ICarterModule
         var items =  app.NewVersionedApi("Items");
         var group = items.MapGroup("api/v{version:apiVersion}")
             .HasApiVersion(1.0);
-        
+
         group.MapPost("/Item", async (Items item, IItemService service) =>
         {
             var create = await service.CreateItem(item);
-            return Results.Created($"/item  /{create.IsSuccess}", create);
+            return Results.Created($"/item/{create.IsSuccess}", create);
         });
-        group.MapPut("/Item", async (Items item, IItemService service) =>
+        group.MapGet("/Item", async (IItemService service) =>
         {
+            var get = await service.ReadItemTotal();
+            return Results.Ok(get);
+        });       
+        group.MapPut("/Item/{id}", async (Items item, IItemService service) =>
+                {
             var edit = await service.UpdateItem(item);
-            return Results.Created($"/item  /{edit.IsSuccess}", edit);
+            return Results.Created($"/Item/{edit.IsSuccess}", edit);
         });
         group.MapGet("/Item/{id}", async (int id, IItemService service) =>
         {

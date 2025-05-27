@@ -10,25 +10,28 @@ public class ItemRepository(RetailCitikoldDbContext context) : IItemService
 {
     
     #region Create Item
-    public async Task<ProcessResponseDto> CreateItem(Items item)
+    public async Task<ItemResponseDto> CreateItem(Items item)
     {
 
         try
         {
           _ =  await context.Items.AddAsync(item);
           _ =  await context.SaveChangesAsync();
-          return new ProcessResponseDto
+          return new ItemResponseDto
           {
               IsSuccess = true,
-              Mssg = ""
+              Error = "Producto ingresado correctamente",
+              Item =  item
+              
           };
         }
         catch (Exception ex)
         {
-            return new ProcessResponseDto
+            return new ItemResponseDto
             {
                 IsSuccess = false,
-                Mssg = $"Error al guardar el item: {ex.InnerException?.Message ?? ex.Message}"
+                Error = $"Error al guardar el item: {ex.InnerException?.Message ?? ex.Message}",
+                Item =  null
             };
         }
        
@@ -56,6 +59,32 @@ public class ItemRepository(RetailCitikoldDbContext context) : IItemService
             Item = item
         };
     }
+
+   
+
+    #endregion
+
+    #region Get All Items
+
+    
+        public async Task<ItemResponseTotalDto> ReadItemTotal()
+        {
+            var item = await context.Items.ToListAsync();
+            if (item == null || item.Count == 0)
+            {
+                return new ItemResponseTotalDto
+                {
+                  
+                    Item = default
+                };
+            }
+            return new ItemResponseTotalDto
+            {
+               
+                Item = item 
+            };
+        }
+
     #endregion
 
     #region Update Iten
@@ -71,7 +100,36 @@ public class ItemRepository(RetailCitikoldDbContext context) : IItemService
                 Mssg = "Item no encontrado"
             };
         }
+        
+        // Validaciones
+        if (item.price <= 0)
+        {
+            return new ProcessResponseDto
+            {
+                IsSuccess = false,
+                Mssg = "El precio debe ser mayor a cero"
+            };
+        }
 
+        if (string.IsNullOrWhiteSpace(item.name))
+        {
+            return new ProcessResponseDto
+            {
+                IsSuccess = false,
+                Mssg = "El nombre no puede estar vacío"
+            };
+        }
+
+        if (item.stock < 0)
+        {
+            return new ProcessResponseDto
+            {
+                IsSuccess = false,
+                Mssg = "El stock no puede ser negativo"
+            };
+        }
+        
+        
         try
         {
             
@@ -81,7 +139,9 @@ public class ItemRepository(RetailCitikoldDbContext context) : IItemService
             ifExist.description = item.description;
             ifExist.id_ProductType = item.id_ProductType;
             ifExist.id_Brand = item.id_Brand;
+            ifExist.price = item.price;
             ifExist.id_CountryOrigin = item.id_CountryOrigin;
+            ifExist.stock = item.stock;
 
             await context.SaveChangesAsync();
             
@@ -99,7 +159,9 @@ public class ItemRepository(RetailCitikoldDbContext context) : IItemService
                 IsSuccess = false,
                 Mssg = $"Error al guardar el item: {ex.InnerException?.Message ?? ex.Message}"
             };
+            
         }
+        
     }
     
     
@@ -142,4 +204,7 @@ public class ItemRepository(RetailCitikoldDbContext context) : IItemService
     }
 
     #endregion
+    
+    
+    
 }

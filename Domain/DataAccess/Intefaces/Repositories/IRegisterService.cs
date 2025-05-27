@@ -15,4 +15,5 @@ public interface IRegisterService
     Task<ProcessResponseDto> RestorePassword(RestorePasswordRequestDto email);
     Task<ProcessResponseDto> RestoreChangePassword(ResetPasswordRequestDto email);
     Task<LogginResponseDto> Loggin(LogginRequestDto loggin);
+    Task<ValidTokenResponseDto> ValidToken(string token);
 }
