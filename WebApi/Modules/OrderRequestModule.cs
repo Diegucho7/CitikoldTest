@@ -22,6 +22,11 @@ public class OrderRequestModule : ICarterModule
         {
             var get = await service.ReadAllOrder();
             return Results.Ok(get);
+        });  
+        group.MapGet("/OrderRequest/{id}", async (int id, IOrderRequestService service) =>
+        {
+            var get = await service.ReadOrder(id);
+            return Results.Ok(get);
         }); 
     }
 }

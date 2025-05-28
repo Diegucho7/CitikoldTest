@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RetailCitikold")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+992691f33d9fa5b6ab289226e77b3b025ecded69")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+626bdd47301977336328b6974ea42b1483721b67")]
 [assembly: System.Reflection.AssemblyProductAttribute("RetailCitikold")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RetailCitikold")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,4 +1,5 @@
 using System.Data;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using RetailCitikold.Domain.DataAccess.Context;
 using RetailCitikold.Domain.DataAccess.Intefaces.Repositories;
@@ -10,11 +11,13 @@ namespace RetailCitikold.Domain.DataAccess.Repositories;
 
 public class OrderRequestRepository(RetailCitikoldDbContext context) : IOrderRequestService
 {
-    #region Create Register
-
+    
+    #region Venta
     public async Task<ProcessResponseDto> CreateOrder(List<OrderRequestUtilRequestDto> orderDetail){
         
+      
         
+       
         var strategy = context.Database.CreateExecutionStrategy();
 
 
@@ -129,11 +132,52 @@ public class OrderRequestRepository(RetailCitikoldDbContext context) : IOrderReq
 
     #endregion
 
-    public async Task<OrderResponseDto> ReadOrder(int id)
+    public async Task<OrderRequestWithClientDto> ReadOrder(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var result = await (
+                from order in context.OrderRequest
+                join person in context.Person on order.id_client equals person.id
+                where order.id == id
+                select new OrderRequestWithClientDto
+                {
+                    Id = order.id,
+                    IdPaymentTime = order.id_paymentTime,
+                    BaseNoObjectIva = order.baseNoObjectIva,
+                    BaseExemptIva = order.baseExemptIva,
+                    BaseIvaZero = order.baseIvaZero,
+                    BaseTax = order.baseTax,
+                    Descount = order.descount,
+                    GrossSubtotal = order.grossSubtotal,
+                    ValueIva = order.valueIva,
+                    ValueIce = order.valueIce,
+                    TotalIva = order.totalIva,
+                    TotalIgv = order.totalIgv,
+                    ValueIgv = order.valueIgv,
+                    IdClient = order.id_client,
+                    NumDocument = order.numDocument,
+                    NumberIdentification = person.numberIdentification,
+                    apellidoPaterno = person.apellidoPaterno,
+                    apellidoMaterno = person.apellidoMaterno,
+                    primerNombre = person.primerNombre,
+                    segundoNombre = person.segundoNombre
+                }).FirstOrDefaultAsync();
+
+           
+
+          
+            return result; //
+        }
+        catch (Exception)
+        {
+           
+            return null;
+        }
+    
     }
 
+    #region Read all order requests
     public async Task<List<Object>> ReadAllOrder()
     {
         try
@@ -182,7 +226,7 @@ public class OrderRequestRepository(RetailCitikoldDbContext context) : IOrderReq
 
     }
     
-
+    #endregion
     public Task<ProcessResponseDto> UpdateOrder(OrderRequestRequestDto order)
     {
         throw new NotImplementedException();
