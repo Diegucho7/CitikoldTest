@@ -27,7 +27,7 @@ public record OrderRequestRequestDto (
 );
 
 public record OrderRequestUtilRequestDto(
-    [property: JsonPropertyName("id_user")] int id_user,
+    
     // int id_user,
     int item_id,
     string item_name,

@@ -33,7 +33,6 @@ public class RetailCitikoldDbContext : DbContext
     public DbSet<Country> Country { get; set; }
     public DbSet<SourceDocument> SourceDocument { get; set; }
    
-    
     #endregion
     
     

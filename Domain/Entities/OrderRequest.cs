@@ -33,4 +33,6 @@ public class OrderRequest
     public int id_client { get; set; }
     
     public string? numDocument { get; set; }
+    
+    public virtual ICollection<OrderRequestDetails> OrderRequestDetails { get; set; }
 }

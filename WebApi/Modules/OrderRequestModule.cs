@@ -28,5 +28,11 @@ public class OrderRequestModule : ICarterModule
             var get = await service.ReadOrder(id);
             return Results.Ok(get);
         }); 
+        
+        group.MapPut("/OrderRequest/{id}", async (int id, List<OrderRequestUtilRequestDto> order, IOrderRequestService service) =>
+        {
+            var edit = await service.UpdateOrder(id,order);
+            return Results.Created($"/OrderRequest/{edit.IsSuccess}", edit);
+        });
     }
 }

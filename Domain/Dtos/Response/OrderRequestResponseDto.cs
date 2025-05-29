@@ -57,12 +57,32 @@ public record OrderRequestWithClientDto
     public decimal? ValueIgv { get; init; }
     public int IdClient { get; init; }
     public string? NumDocument { get; init; }
-
-    public string? NumberIdentification { get; init; }
+    
+    public List<OrderDetailsDTO>  Items { get; set; } = new();
+    public string? NumberIdentification { get; set; }
     public string? apellidoPaterno { get; set; }
     public string? apellidoMaterno { get; set; }
     public string? primerNombre { get; set; }
     public string? segundoNombre { get; set; }
+    
 }
 
 
+
+
+public record OrderDetailsDTO
+{
+    public int item_id { get; init; }
+    public string? item_name { get; set; } = null!;
+    public decimal total_units { get; set; }
+    public decimal price { get; set; }
+    public decimal? discount_percent { get; set; }
+    public decimal ?discount_value { get; set; }
+    public decimal subtotal_before_tax { get; set; }
+    public decimal iva { get; set; }
+    public decimal? iva_value { get; set; }
+    public decimal igv { get; set; }
+    public decimal igv_value { get; set; }
+    public decimal totalIva { get; set; }
+    public decimal totalIgv { get; set; }
+}

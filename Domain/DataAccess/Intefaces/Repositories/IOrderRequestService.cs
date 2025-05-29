@@ -9,6 +9,7 @@ public interface IOrderRequestService
     Task<ProcessResponseDto> CreateOrder(List<OrderRequestUtilRequestDto> order);
     Task<OrderRequestWithClientDto> ReadOrder(int id);
     Task<List<Object>> ReadAllOrder();
-    Task<ProcessResponseDto> UpdateOrder(OrderRequestRequestDto order);
+    Task<ProcessResponseDto> UpdateOrder(int id, List<OrderRequestUtilRequestDto> order);
+
     Task<OrderResponseDto> DeleteOrder(int id);
 }

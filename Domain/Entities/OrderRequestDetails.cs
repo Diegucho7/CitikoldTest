@@ -24,6 +24,6 @@ public class OrderRequestDetails
     public decimal totalIva { get; set; }
     public decimal totalIgv { get; set; }
     
-    
+    public virtual OrderRequest OrderRequest { get; set; }
     public string? observation { get; set; }
 }
