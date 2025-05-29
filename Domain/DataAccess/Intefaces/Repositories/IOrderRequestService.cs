@@ -11,5 +11,5 @@ public interface IOrderRequestService
     Task<List<Object>> ReadAllOrder();
     Task<ProcessResponseDto> UpdateOrder(int id, List<OrderRequestUtilRequestDto> order);
 
-    Task<OrderResponseDto> DeleteOrder(int id);
+    Task<ProcessResponseDto> DeleteOrder(int id);
 }

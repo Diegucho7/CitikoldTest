@@ -264,36 +264,32 @@ public class OrderRequestRepository(RetailCitikoldDbContext context) : IOrderReq
     public async Task<ProcessResponseDto> UpdateOrder(int id, List<OrderRequestUtilRequestDto> orderDetail)
     {
         var strategy = context.Database.CreateExecutionStrategy();
-
     return await strategy.ExecuteAsync(async () =>
     {
         using (var transaction = await context.Database.BeginTransactionAsync())
         {
             try
             {
-                // 1. Obtener la orden con detalles
                 var existingOrder = await context.OrderRequest
-                    .Include(o => o.OrderRequestDetails)
                     .FirstOrDefaultAsync(o => o.id == id);
 
                 if (existingOrder == null)
                     return new ProcessResponseDto { IsSuccess = false, Mssg = "Orden no encontrada." };
 
-                // 2. Devolver stock de items antiguos
-                foreach (var detail in existingOrder.OrderRequestDetails)
+                var orderDetails = await context.OrderRequestDetails.Where(a => a.orderRequest_id == id).ToListAsync();
+
+                foreach (var detail in orderDetails)
                 {
                     var item = await context.Items.FirstOrDefaultAsync(i => i.id == detail.item_id);
                     if (item != null)
                     {
                         item.stock += detail.total_units;
-                        context.Items.Update(item); // marca como modificado
+                        context.Items.Update(item);
                     }
                 }
 
-                // 3. Eliminar detalles antiguos
-                context.OrderRequestDetails.RemoveRange(existingOrder.OrderRequestDetails);
+                context.OrderRequestDetails.RemoveRange(orderDetails);
 
-                // 4. Crear detalles nuevos y validar stock
                 List<OrderRequestDetails> updatedDetails = new List<OrderRequestDetails>();
 
                 foreach (var newDetail in orderDetail)
@@ -329,7 +325,6 @@ public class OrderRequestRepository(RetailCitikoldDbContext context) : IOrderReq
                     updatedDetails.Add(detail);
                 }
 
-                // 5. Actualizar totales en la orden
                 existingOrder.baseTax = updatedDetails.Sum(x => x.subtotal_before_tax);
                 existingOrder.descount = updatedDetails.Sum(x => x.discount_value ?? 0); // Revisa que la propiedad se llame así
                 existingOrder.grossSubtotal = updatedDetails.Sum(x => x.subtotal_before_tax);
@@ -340,10 +335,10 @@ public class OrderRequestRepository(RetailCitikoldDbContext context) : IOrderReq
 
                 context.OrderRequest.Update(existingOrder);
 
-                // 6. Agregar detalles nuevos
+
                 await context.OrderRequestDetails.AddRangeAsync(updatedDetails);
 
-                // 7. Guardar cambios
+          
                 await context.SaveChangesAsync();
 
                 await transaction.CommitAsync();
@@ -367,8 +362,85 @@ public class OrderRequestRepository(RetailCitikoldDbContext context) : IOrderReq
     });
     }
     #endregion
-    public Task<OrderResponseDto> DeleteOrder(int id)
+    
+    
+    #region DeleteOrderRequest
+    
+    public async Task<ProcessResponseDto> DeleteOrder(int id)
     {
-        throw new NotImplementedException();
+        var strategy = context.Database.CreateExecutionStrategy();
+
+    return await strategy.ExecuteAsync(async () =>
+    {
+        using (var transaction = await context.Database.BeginTransactionAsync())
+        {
+            try
+            {
+                // Obtener los detalles de la orden
+                var orderDetails = await context.OrderRequestDetails
+                    .Where(od => od.orderRequest_id == id)
+                    .ToListAsync();
+
+                if (!orderDetails.Any())
+                {
+                    return new ProcessResponseDto
+                    {
+                        IsSuccess = false,
+                        Mssg = "No se encontraron detalles para esta orden."
+                    };
+                }
+
+                // Devolver stock
+                foreach (var detail in orderDetails)
+                {
+                    var item = await context.Items.FirstOrDefaultAsync(i => i.id == detail.item_id);
+                    if (item != null)
+                    {
+                        item.stock += detail.total_units;
+                        context.Items.Update(item);
+                    }
+                }
+
+                // Eliminar detalles
+                context.OrderRequestDetails.RemoveRange(orderDetails);
+                await context.SaveChangesAsync();
+                // Eliminar orden
+                var order = await context.OrderRequest
+                    .FirstOrDefaultAsync(o => o.id == id);
+
+                if (order == null)
+                {
+                    return new ProcessResponseDto
+                    {
+                        IsSuccess = false,
+                        Mssg = "Orden no encontrada."
+                    };
+                }
+
+                context.OrderRequest.Remove(order);
+
+                await context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return new ProcessResponseDto
+                {
+                    IsSuccess = true,
+                    Mssg = "Orden eliminada y stock devuelto exitosamente."
+                };
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return new ProcessResponseDto
+                {
+                    IsSuccess = false,
+                    Mssg = $"Error al eliminar la orden: {ex.Message}"
+                };
+            }
+        }
+    });
+    
     }
+    #endregion
+
 }

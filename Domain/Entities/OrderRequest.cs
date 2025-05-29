@@ -34,5 +34,4 @@ public class OrderRequest
     
     public string? numDocument { get; set; }
     
-    public virtual ICollection<OrderRequestDetails> OrderRequestDetails { get; set; }
 }

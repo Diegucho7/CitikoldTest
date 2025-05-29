@@ -74,7 +74,7 @@ public record OrderDetailsDTO
 {
     public int item_id { get; init; }
     public string? item_name { get; set; } = null!;
-    public decimal total_units { get; set; }
+    public int total_units { get; set; }
     public decimal price { get; set; }
     public decimal? discount_percent { get; set; }
     public decimal ?discount_value { get; set; }

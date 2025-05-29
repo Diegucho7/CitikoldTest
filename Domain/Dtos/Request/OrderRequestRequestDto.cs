@@ -7,7 +7,7 @@ public record OrderRequestRequestDto (
     int item_id,
     // int OrderRequest_id,
     string item_name,
-    decimal total_units,
+    int total_units,
     decimal price,
     decimal discount_percent,
     decimal discount_value,

@@ -1,4 +1,5 @@
 using Carter;
+using Microsoft.AspNetCore.Mvc;
 using RetailCitikold.Domain.DataAccess.Intefaces.Repositories;
 using RetailCitikold.Domain.Dtos.Request;
 using RetailCitikold.Domain.Entities;
@@ -29,9 +30,14 @@ public class OrderRequestModule : ICarterModule
             return Results.Ok(get);
         }); 
         
-        group.MapPut("/OrderRequest/{id}", async (int id, List<OrderRequestUtilRequestDto> order, IOrderRequestService service) =>
+        group.MapPut("/OrderRequest/{id}", async ([FromRoute]int id,[FromBody] List<OrderRequestUtilRequestDto> order, IOrderRequestService service) =>
         {
             var edit = await service.UpdateOrder(id,order);
+            return Results.Created($"/OrderRequest/{edit.IsSuccess}", edit);
+        });
+        group.MapDelete("/OrderRequest/{id}", async ([FromRoute]int id, IOrderRequestService service) =>
+        {
+            var edit = await service.DeleteOrder(id);
             return Results.Created($"/OrderRequest/{edit.IsSuccess}", edit);
         });
     }
